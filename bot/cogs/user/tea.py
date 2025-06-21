@@ -33,7 +33,7 @@ class __MainTeaCog(Cog):
          
         log_channel = self.bot.get_channel(Config.BOT_TEA_LOG_CHANNEL)
         embed = Embed(
-            description=f"**+ {count} <a:SPOTLIGHTGIF25:1193178219927584789> <@{to_user_id}> от <@{from_user_id}>\n* `{to_user_account['tea_count']} > {to_user_account['tea_count'] + count}`**",
+            description=f"**+ {count} ☕ <@{to_user_id}> от <@{from_user_id}>\n* `{to_user_account['tea_count']} > {to_user_account['tea_count'] + count}`**",
             color=Colour.orange()
         )
         await log_channel.send(embed=embed)
@@ -57,7 +57,7 @@ class __MainTeaCog(Cog):
         
         log_channel = self.bot.get_channel(Config.BOT_TEA_LOG_CHANNEL)
         embed = Embed(
-            description=f"**- {count} <a:SPOTLIGHTGIF25:1193178219927584789> <@{to_user_id}> от <@{from_user_id}>\n* `{to_user_account['tea_count']} > {to_user_account['tea_count'] - count}`**",
+            description=f"**- {count} ☕ <@{to_user_id}> от <@{from_user_id}>\n* `{to_user_account['tea_count']} > {to_user_account['tea_count'] - count}`**",
             color=Colour.orange()
         )
         await log_channel.send(embed=embed)
@@ -80,7 +80,7 @@ class __MainTeaCog(Cog):
         
         log_channel = self.bot.get_channel(Config.BOT_TEA_LOG_CHANNEL)
         embed = Embed(
-            description=f"**~ {count} <a:SPOTLIGHTGIF25:1193178219927584789> <@{to_user_id}> от <@{from_user_id}>\n* `{to_user_account['tea_count']} > {count}`**",
+            description=f"**~ {count} ☕ <@{to_user_id}> от <@{from_user_id}>\n* `{to_user_account['tea_count']} > {count}`**",
             color=Colour.orange()
         )
         await log_channel.send(embed=embed)
@@ -168,7 +168,7 @@ class __MainTeaCog(Cog):
             
         await self._give_tea(to_user.id, ctx.author.id)
         embed = Embed(
-            description=f"**+ <a:SPOTLIGHTGIF25:1193178219927584789> {to_user.mention} от {ctx.author.mention}**",
+            description=f"**+ ☕ {to_user.mention} от {ctx.author.mention}**",
             color=Colour.orange()
         )
         await ctx.send(embed=embed)
@@ -189,7 +189,7 @@ class __MainTeaCog(Cog):
         from_user_account = await get_tea_account(ctx.author.id)
         await self._give_tea(to_user.id, ctx.author.id, count=count, no_last_tea_date=True)
         embed = Embed(
-            description=f"**+ {count} <a:SPOTLIGHTGIF25:1193178219927584789> {to_user.mention} от {ctx.author.mention}**",
+            description=f"**+ {count} ☕ {to_user.mention} от {ctx.author.mention}**",
             color=Colour.orange()
         )
         await ctx.send(embed=embed)
@@ -209,7 +209,7 @@ class __MainTeaCog(Cog):
         from_user_account = await get_tea_account(ctx.author.id)
         await self._take_tea(to_user.id, ctx.author.id, count=count, no_last_tea_date=True)
         embed = Embed(
-            description=f"**\- {count} <a:SPOTLIGHTGIF25:1193178219927584789> {to_user.mention} от {ctx.author.mention}**",
+            description=f"**\- {count} ☕ {to_user.mention} от {ctx.author.mention}**",
             color=Colour.orange()
         )
         await ctx.send(embed=embed)
@@ -229,7 +229,7 @@ class __MainTeaCog(Cog):
         from_user_account = await get_tea_account(ctx.author.id)
         await self._set_tea(to_user.id, ctx.author.id, count=count, no_last_tea_date=True)
         embed = Embed(
-            description=f"**~ {count} <a:SPOTLIGHTGIF25:1193178219927584789> {to_user.mention} от {ctx.author.mention}**",
+            description=f"**~ {count} ☕ {to_user.mention} от {ctx.author.mention}**",
             color=Colour.orange()
         )
         await ctx.send(embed=embed)
