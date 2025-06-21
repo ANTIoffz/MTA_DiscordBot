@@ -21,6 +21,8 @@ class Config(ABC):
     BOT_FEEDBACK_CHANNEL: Final = 0 #Канал для отсылки Feedback-оф 
     BOT_ADMIN_DISCIPLINE_TABLE_CHANNEL: Final = 0 #Канал динамической таблицы предов выговоров 
     BOT_TEA_LOG_CHANNEL: Final = 0 #Канал логов чая 
+    BOT_NEW_PROMO_CHANNEL: Final = 0 #Канал логов новых промокодов
+    BOT_NEW_PROMO_IMAGE: Final = '' #Изображение для промокода
     
     BOT_LOG_EXCEPTIONS: Final = [ #Игнорируемые команды для логов
         'status',
