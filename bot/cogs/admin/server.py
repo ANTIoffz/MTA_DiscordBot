@@ -112,6 +112,9 @@ class __MainServerCog(Cog):
             res = re.sub(r'[^a-zA-Z_?]', '', res, flags=re.UNICODE)
             res = res.split('?')[1:]
             players_list = f"\n".join(f"`{nickname.strip()}`" for nickname in res)
+            if any((True if not "_" in nickname else False for nickname in res)):
+                players_list += "\n-# имя может быть случайное пока игрок подключается"
+
             embed = Embed(
                 title=f"👥 [{len(res)}]{Config.BOT_SEPARATOR}Игроки на сервере",
                 description=players_list if players_list else "**Нету   ¯\_(ツ)_/¯**",
