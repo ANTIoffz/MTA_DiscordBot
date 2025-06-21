@@ -19,12 +19,13 @@ class __MainModerationCog(Cog):
     async def ban(
             self, ctx,
             player_id: int = Param(description='Айди игрока'),
-            seconds: int = Param(description='Время бана (в секундах)')
+            seconds: int = Param(description='Время бана (в секундах)'),
+            reason: str = Param(description='Причина ')
     ) -> None:
         player = await check_id(ctx, player_id)
         if player:
             change_player_field(player_id, "banned", time() + seconds)
-            await send_success(ctx, f"**Игрок `{player_id}` забанен на `{seconds}` сек (он должен перезайти)**")
+            await send_success(ctx, f"**Игрок `{player_id}` забанен на `{seconds}` сек (он должен перезайти)\nПричина: `{reason}`**")
 
 
     @slash_command(
@@ -36,12 +37,13 @@ class __MainModerationCog(Cog):
     async def mute(
             self, ctx,
             player_id: int = Param(description='Айди игрока'),
-            seconds: int = Param(description='Время мута (в секундах)')
+            seconds: int = Param(description='Время мута (в секундах)'),
+            reason: str = Param(description='Причина')
     ) -> None:
         player = await check_id(ctx, player_id)
         if player:
             change_player_field(player_id, "muted", time() + seconds)
-            await send_success(ctx, f"**Игрок `{player_id}` замьючен на `{seconds}` сек (он должен перезайти)**")
+            await send_success(ctx, f"**Игрок `{player_id}` замьючен на `{seconds}` сек (он должен перезайти)\nПричина: `{reason}`**")
 
 
 def register_moderation_cogs(bot: Bot) -> None:
