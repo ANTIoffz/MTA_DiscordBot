@@ -9,15 +9,18 @@ import re
 from pprint import pprint
 import json
 
+
 class RewardsModal(ui.Modal):
-    def __init__(self, 
+    def __init__(
+            self, 
             ckey: str, 
             type: str = 'all',
             for_new_users: bool = False,
             start_date: int = int(time()),
             end_date: int = int(time()) + 86400,
             max_uses: int = 4294967292,
-            timeout: int = 600
+            timeout: int = 600,
+            on_create_callback: callable = None
         ):
         self.ckey = ckey
         self.type = type
@@ -26,6 +29,7 @@ class RewardsModal(ui.Modal):
         self.end_date = end_date
         self.max_uses = max_uses
         self.timeout = timeout
+        self.on_create_callback = on_create_callback
         
         components = [
             ui.TextInput(
@@ -121,11 +125,11 @@ class RewardsModal(ui.Modal):
         if reward_items:
             rewards.append(reward_items)
         
-        self.rewards = json.dumps(rewards, indent=4).replace('"', '\\"')
+        self.rewards_str = json.dumps(rewards, indent=4).replace('"', '\\"')
         data = {
             "ckey": f"'{self.ckey}'",
             "type": f"'{self.type}'",
-            "rewards": f'"{self.rewards}"',
+            "rewards": f'"{self.rewards_str}"',
             "for_new_users": f"'{self.for_new_users}'",
             "start_date": f"'{self.start_date}'",
             "end_date": f"'{self.end_date}'",
@@ -138,6 +142,9 @@ class RewardsModal(ui.Modal):
 
         await create_promo_db(data)
         await send_success(ctx, f"**Промокод `{self.ckey}` создан!**\n```json\n{rewards}```")
+        if self.on_create_callback:
+            await self.on_create_callback(ctx, data, rewards)
+
 
         
     async def on_error(self, error: Exception, ctx: ModalInteraction):
@@ -165,7 +172,8 @@ class RewardsModal(ui.Modal):
                         for_new_users=self.for_new_users,
                         start_date=self.start_date,
                         end_date=self.end_date,
-                        max_uses=self.max_uses
+                        max_uses=self.max_uses,
+                        on_create_callback=self.send_announce
                     )
                 )
             
@@ -187,11 +195,12 @@ class __MainPromoCog(Cog):
     async def create_promo(
             self, ctx,
             ckey: str = Param(description="Название промокода"),
-            start_date: str = Param(description="Дата начала действия промокода (день.месяц.год)"),
+            start_date: str = Param(default=datetime.now().strftime('%d.%m.%Y'), description="Дата начала действия промокода (день.месяц.год)"),
             end_date: str = Param(description="Дата конца действия промокода (день.месяц.год)"),
             type: str = Param(default="all", description="Тип промокода (для всех, для админов)", choices=["all", "admin"]),
             for_new_users: bool = Param(default=0, description="Для новых пользователей", choices=[1, 0]),
-            max_uses: int = Param(default=4294967292, description="Количество использований")
+            max_uses: int = Param(default=4294967292, description="Количество использований"),
+            announce: bool = Param(description="Оповестить пользователей", choices=[1, 0])
     ) -> None:
         if find_promo(ckey):
             await send_error(ctx, f"**Промокод `{ckey}` уже существует!**", ephemeral=True)
@@ -216,10 +225,43 @@ class __MainPromoCog(Cog):
                 for_new_users=int(for_new_users),
                 start_date=start_date_unix,
                 end_date=end_date_unix,
-                max_uses=max_uses
+                max_uses=max_uses,
+                on_create_callback=self.send_announce if announce else None
             )
         )
 
+
+    async def send_announce(self, ctx, data, rewards):
+        rewards_data = {}
+        ckey = str(data['ckey']).replace("'", "")
+
+        for num, reward in enumerate(rewards[0]):
+            if reward['id'] == 'case':
+                rewards_data[f"{reward['id']}{num}"] = reward['params']
+                continue
+            rewards_data[reward['id']] = reward['params']
+
+        rewards_str = "**"
+        rewards_str += f"# Промокод `{ckey}`\n"
+        rewards_str += f"Содержимое -\n"
+        rewards_str += f"* Деньги `{rewards_data.get('soft')['count']} $`\n" if rewards_data.get('soft') else ""
+        rewards_str += f"* Донатная валюта: `{rewards_data.get('hard')['count']} $`\n" if rewards_data.get('hard') else ""
+        rewards_str += f"* Рем. комплекты: `x{rewards_data.get('repairbox')['count']}`\n" if rewards_data.get('repairbox') else ""
+        rewards_str += f"* Дней премиума `{rewards_data.get('premium')['days']}`\n" if rewards_data.get('premium') else ""
+        for key, reward in rewards_data.items():
+            if key.startswith('case'):
+                rewards_str += f"* Кейс `{reward['id']}` x{reward['count']}\n"
+        rewards_str += "**"
+
+        embed = Embed(
+            description=rewards_str,
+            color=Colour.orange(),
+            timestamp=datetime.now(),            
+        )
+        embed.set_image(url=Config.BOT_NEW_PROMO_IMAGE)
+
+        announce_channel = self.bot.get_channel(Config.BOT_NEW_PROMO_CHANNEL)
+        await announce_channel.send(embed=embed)
     
 def register_promo_cogs(bot: Bot) -> None:
     bot.add_cog(__MainPromoCog(bot))
