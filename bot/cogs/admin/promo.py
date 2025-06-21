@@ -258,7 +258,8 @@ class __MainPromoCog(Cog):
             color=Colour.orange(),
             timestamp=datetime.now(),            
         )
-        embed.set_image(url=Config.BOT_NEW_PROMO_IMAGE)
+        if Config.BOT_NEW_PROMO_IMAGE:
+            embed.set_image(url=Config.BOT_NEW_PROMO_IMAGE)
 
         announce_channel = self.bot.get_channel(Config.BOT_NEW_PROMO_CHANNEL)
         await announce_channel.send(embed=embed)
