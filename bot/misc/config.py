@@ -58,9 +58,9 @@ class Config(ABC):
     NEW_ACCOUNT_SETTINGS: Final = { #Дефолт настройки для новых аккаунтов
         'skin': 163
     } 
-    NICKNAME_MIN_LEN: Final = 3 #Минимальная длинна имени
-    LOGIN_MIN_LEN: Final = 3 #Минимальная длинна логина
-    PASSWORD_MIN_LEN: Final = 3 #Минимальная длинна пароля
+    NICKNAME_MIN_LEN: Final = 3 #Минимальная длина имени
+    LOGIN_MIN_LEN: Final = 3 #Минимальная длина логина
+    PASSWORD_MIN_LEN: Final = 3 #Минимальная длина пароля
     IGNORE_MAX_ACCOUNTS_ROLES: Final = []# Роли с игнором ограничения акков
     ADMIN_MAX_WARNINGS: Final = 3 #Максимум предов до выговора
     ADMIN_MAX_REPRIMANDS: Final = 2 #Максимум выговоров до снятия
